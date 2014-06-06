@@ -3,6 +3,10 @@
 import webapp2
 import json
 
+import urllib
+import urllib2
+import cookielib
+
 ### Magtifun
 
 class ClassName(object):
@@ -34,13 +38,12 @@ class ClassName(object):
 		self.password = password
 		self.authorize()
 
-	#public function __destruct() {
+	#def __destruct() {
 	#	unlink($this->cookieFile);
 	#}
 
 	def getUrl(self, code, full = False):
-		return (self.URL_BASE if full else "")
-			+ (self.URL_QUERY %  code)
+		return (self.URL_BASE if full else "") + (self.URL_QUERY %  code)
 
 	def logCookie(self):
 		#echo "\n\n--- Cookie:\n" . file_get_contents($this->cookieFile) . "---\n\n";
@@ -48,69 +51,59 @@ class ClassName(object):
 
 	def authorize(self):
 		data = {
-			"act": 1,
-			"user": self.username,
-			"password": self.password
+			"act":		1,
+			"user":		self.username,
+			"password":	self.password
 		}
 		self.sendRequest(self.CODE_LOGIN, $data)
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
 
 	def sendRequest(self, code, data = []):
-		$ch = curl_init(self::URL_BASE);
-		$curlConfig = array(
-			CURLOPT_URL => is_integer($code) ? $this->getUrl($code, true) : $code,
-			CURLOPT_POST => true,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_POSTFIELDS => $data,
-			CURLOPT_COOKIE => "user_name=" . $this->username . "; user_password=" . md5($this->
-				password));
-		if ($code == self::CODE_LOGIN) {
-			$this->cookieFile = tempnam("/tmp", "CURLCOOKIE");
-			$curlConfig[CURLOPT_COOKIEJAR] = $this->cookieFile;
-		} else {
-			$curlConfig[CURLOPT_COOKIEFILE] = $this->cookieFile;
-		}
-		curl_setopt_array($ch, $curlConfig);
-		$result = curl_exec($ch);
-		curl_close($ch);
-		$this->log[] = (is_integer($code)) ? "(big data, not logged)" : $result;
-		return $result;
+		
+		# CookieJar and opener
+		cookieJar = cookielib.CookieJar()
+		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookieJar))
+		urllib2.install_opener(opener)
+
+		req = urllib2.Request(
+			self.getUrl(code, True) if isinstance(code, (int, long)) else code,
+			urllib.urlencode(data))
+
+		res = urllib2.urlopen(req).read()
+
+		return res
 	}
 
-	private function clear() {
-		$this->recipients = array();
-		$this->message = "";
-	}
+	def clear(self):
+		self.recipients = []
+		self.message = ""
 
-	public function isLoggedIn() {
-		return $this->loginStatus != "not_logged_in";
-	}
+	def isLoggedIn(self):
+		return self.loginStatus != "not_logged_in"
 
-	public function addRecipient($number) {
-		$this->recipients[] = $number;
-		return $this;
-	}
+	def addRecipient(self, number):
+		self.recipients.append(number)
+		# return self
 
-	public function setMessage($msg) {
-		$this->message = $msg;
-		return $this;
-	}
+	def setMessage(self, msg):
+		self.message = msg;
+		# return self
 
-	public function send() {
-		$msgData = array("recipients" => implode(",", $this->recipients), "message_body" =>
-				$this->message);
-		$response = $this->sendRequest(self::URL_SMS_SEND, $msgData);
-		$this->msgStatus = $response;
-		$this->clear();
-		return ($response == "success");
-	}
+	def send(self):
+		data = dict(
+			recipients = ''.join(self.recipients)
+			message_body = self.message
+		)
+		response = self.sendRequest(self.URL_SMS_SEND, data)
+		self.msgStatus = response
+		self.clear()
+		return response == "success"
 
-	public function getCredits() {
+	def getCredits(self):
 		$html = str_get_html($this->sendRequest(self::CODE_BALANCE));
 		return trim($html->find("span.xxlarge", 0)->plaintext);
-	}
 
-	public function getAccountInfo() {
+	def getAccountInfo() {
 		$result = array();
 		$html = str_get_html($this->sendRequest(self::CODE_ACCOUNT_INFO));
 		$result["username"] = trim($html->find("input#user_name", 0)->value);
@@ -126,7 +119,7 @@ class ClassName(object):
 		return $result;
 	}
 
-	public function getContacts() {
+	def getContacts() {
 		$html = $this->sendRequest(self::CODE_CONTACTS);
 		$html = explode("Generate Contacts Array", $html);
 		$html = explode("</script>", $html[1]);
@@ -151,7 +144,7 @@ class ClassName(object):
 		return $result;
 	}
 
-	public function getHistory($page = 1) {
+	def getHistory($page = 1) {
 		$result = array();
 		$html = str_get_html($this->sendRequest(self::CODE_HISTORY, array("cur_page" =>
 				$page)));
@@ -191,10 +184,8 @@ class ClassName(object):
 		return $result;
 	}
 
-	result = []	
 
-	def get
-		
+
 
 ### Handlers ###
 
