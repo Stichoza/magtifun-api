@@ -91,7 +91,7 @@ class ClassName(object):
 
 	def send(self):
 		data = dict(
-			recipients = ''.join(self.recipients)
+			recipients = ','.join(self.recipients)
 			message_body = self.message
 		)
 		response = self.sendRequest(self.URL_SMS_SEND, data)
