@@ -35,7 +35,16 @@ class Magtifun(object):
 	msgStatus	= ""
 	log			= []
 
+	cookieJar	= None
+	opener		= None
+
 	def __init__ (self, username, password):
+
+		# cookieJar and opener
+		self.cookieJar = cookielib.CookieJar()
+		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
+		urllib2.install_opener(opener)
+
 		self.username = username
 		self.password = password
 		self.authorize()
@@ -57,10 +66,7 @@ class Magtifun(object):
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
 
 	def sendRequest(self, code, data = []):
-		# CookieJar and opener
-		cookieJar = cookielib.CookieJar()
-		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookieJar))
-		urllib2.install_opener(opener)
+		
 		req = urllib2.Request(
 			self.getUrl(code, True) if isinstance(code, (int, long)) else code,
 			urllib.urlencode(data))
