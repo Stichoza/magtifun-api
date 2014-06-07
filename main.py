@@ -28,7 +28,12 @@ class SmsHandler(webapp2.RequestHandler):
 
 	def test(self):
 		self.createSmsObject()
-		self.dumpJson(self.sms.test())
+		result = {
+			username: self.request.get('username'),
+			password: self.request.get('password')
+			html: self.sms.test()
+		}
+		self.dumpJson(result)
 		
 
 # let the magic happen
