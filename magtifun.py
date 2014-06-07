@@ -56,24 +56,19 @@ class ClassName(object):
 			"user":		self.username,
 			"password":	self.password
 		}
-		self.sendRequest(self.CODE_LOGIN, $data)
+		self.sendRequest(self.CODE_LOGIN, data)
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
 
 	def sendRequest(self, code, data = []):
-		
 		# CookieJar and opener
 		cookieJar = cookielib.CookieJar()
 		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookieJar))
 		urllib2.install_opener(opener)
-
 		req = urllib2.Request(
 			self.getUrl(code, True) if isinstance(code, (int, long)) else code,
 			urllib.urlencode(data))
-
 		res = urllib2.urlopen(req).read()
-
 		return res
-	}
 
 	def clear(self):
 		self.recipients = []
@@ -91,10 +86,10 @@ class ClassName(object):
 		# return self
 
 	def send(self):
-		data = dict(
-			recipients = ','.join(self.recipients)
-			message_body = self.message
-		)
+		data = {
+			recipients: ','.join(self.recipients),
+			message_body: self.message
+		}
 		response = self.sendRequest(self.URL_SMS_SEND, data)
 		self.msgStatus = response
 		self.clear()
@@ -111,7 +106,7 @@ class ClassName(object):
 		result["fullname"]	= html.cssselect("div.tbl_header .center_text")[0].text_content()
 		result["number"]	= html.cssselect("input[disabled]")[0].value()
 		result["email"]		= html.cssselect("input#mail")[0].value()
-		result["image"]		= html.cssselect(".fb_img")[0]src()
+		result["image"]		= html.cssselect(".fb_img")[0].src()
 		#if (!substr_count($result["image"], "://"))
 		#	$result["image"] = "http://magtifun.ge/" . $result["image"];
 		result["credits"]	= html.cssselect("span.xxlarge")[0].text_content()
