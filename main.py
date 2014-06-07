@@ -30,7 +30,7 @@ class SmsHandler(webapp2.RequestHandler):
 		self.createSmsObject()
 		result = {
 			username: self.request.get('username'),
-			password: self.request.get('password')
+			password: self.request.get('password'),
 			html: self.sms.test()
 		}
 		self.dumpJson(result)
