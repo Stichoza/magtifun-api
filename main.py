@@ -18,9 +18,13 @@ class SmsHandler(webapp2.RequestHandler):
 		self.response.headers['Content-Type'] = 'application/json'
 		self.response.write(json.dumps(data))
 
-	def get(self):
+	def index(self):
 		self.createSmsObject()
 		self.dumpJson(self.sms.getAccountInfo())
+
+	def send(self):
+		self.createSmsObject()
+		self.dumpJson(self.sms.getCredits())
 		
 
 # let the magic happen
