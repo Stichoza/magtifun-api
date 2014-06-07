@@ -3,7 +3,7 @@
 import webapp2
 import json
 
-import magtifun
+from magrifun import Magtifun
 
 class SmsHandler(webapp2.RequestHandler):
 
