@@ -49,9 +49,9 @@ class Magtifun(object):
 
 	def authorize(self):
 		data = dict(
-			"act"		= 1,
-			"user"		= self.username,
-			"password"	= self.password
+			act			= 1,
+			user		= self.username,
+			password	= self.password
 		)
 		self.sendRequest(self.CODE_LOGIN, data)
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
