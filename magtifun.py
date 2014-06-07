@@ -10,7 +10,7 @@ from lxml.html import parse
 
 ### Magtifun
 
-class ClassName(object):
+class Magtifun(object):
 
 	# URL patterns
 	URL_SMS_SEND	= "http://www.magtifun.ge/scripts/sms_send.php"
