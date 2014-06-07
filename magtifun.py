@@ -40,10 +40,6 @@ class Magtifun(object):
 		self.password = password
 		self.authorize()
 
-	#def __destruct() {
-	#	unlink($this->cookieFile);
-	#}
-
 	def getUrl(self, code, full = False):
 		return (self.URL_BASE if full else "") + (self.URL_QUERY %  code)
 
@@ -52,11 +48,11 @@ class Magtifun(object):
 		pass
 
 	def authorize(self):
-		data = {
-			"act":		1,
-			"user":		self.username,
-			"password":	self.password
-		}
+		data = dict(
+			"act"		= 1,
+			"user"		= self.username,
+			"password"	= self.password
+		)
 		self.sendRequest(self.CODE_LOGIN, data)
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
 
