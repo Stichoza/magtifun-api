@@ -9,11 +9,19 @@ class SmsHandler(webapp2.RequestHandler):
 
 	sms = None
 
-	def get(self):
-		self.sms = Magtifun()
+	def createSmsObject(self):
+		username = self.request.get('username')
+		password = self.request.get('password')
+		self.sms = Magtifun(username, password)
 
+	def dumpJson(self, data):
 		self.response.headers['Content-Type'] = 'application/json'
-		self.response.write(json.dumps(obj))
+		self.response.write(json.dumps(data))
+
+	def get(self):
+		self.createSmsObject()
+		self.dumpJson(self.sms.getAccountInfo())
+		
 
 # let the magic happen
 app = webapp2.WSGIApplication([
