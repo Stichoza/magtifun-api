@@ -43,7 +43,7 @@ class Magtifun(object):
 		# cookieJar and opener
 		self.cookieJar = cookielib.CookieJar()
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
-		urllib2.install_opener(opener)
+		urllib2.install_opener(self.opener)
 
 		self.username = username
 		self.password = password
