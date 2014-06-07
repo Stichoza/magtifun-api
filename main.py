@@ -30,7 +30,7 @@ class SmsHandler(webapp2.RequestHandler):
 # let the magic happen
 app = webapp2.WSGIApplication([
 
-	webapp2.Route('/',		handler = 'handlers.SmsHandler:index',	schemes = ['https']),
-	webapp2.Route('/send',	handler = 'handlers.SmsHandler:send',	schemes = ['https'])
+	webapp2.Route('/',		handler = 'SmsHandler:index',	schemes = ['https']),
+	webapp2.Route('/send',	handler = 'SmsHandler:send',	schemes = ['https'])
 
 ], debug = True)
