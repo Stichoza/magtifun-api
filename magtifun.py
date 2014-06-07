@@ -114,6 +114,10 @@ class Magtifun(object):
 		result["balance"]	= html.cssselect("form .dark")[0].text_content()
 		return result
 
+	def test(self):
+		return self.sendRequest(self.CODE_ACCOUNT_INFO)
+		#return lxml.html.fromstring(self.sendRequest(self.CODE_ACCOUNT_INFO))
+
 	def getContacts(self):
 		# html = lxml.html.fromstring(self.sendRequest(self.CODE_CONTACTS))
 		# $html = explode("Generate Contacts Array", $html);

@@ -25,12 +25,17 @@ class SmsHandler(webapp2.RequestHandler):
 	def send(self):
 		self.createSmsObject()
 		self.dumpJson(self.sms.getCredits())
+
+	def test(self):
+		self.createSmsObject()
+		self.dumpJson(self.sms.test())
 		
 
 # let the magic happen
 app = webapp2.WSGIApplication([
 
 	webapp2.Route('/',		handler = SmsHandler, handler_method='index',	schemes = ['https']),
-	webapp2.Route('/send',	handler = SmsHandler, handler_method='send',	schemes = ['https'])
+	webapp2.Route('/send',	handler = SmsHandler, handler_method='send',	schemes = ['https']),
+	webapp2.Route('/test',	handler = SmsHandler, handler_method='test',	schemes = ['https'])
 
 ], debug = True)
