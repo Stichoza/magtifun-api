@@ -6,7 +6,7 @@ import urllib
 import urllib2
 import cookielib
 
-from lxml.html import parse
+import lxml
 
 ### Magtifun
 
