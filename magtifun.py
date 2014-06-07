@@ -13,10 +13,10 @@ from lxml.html import parse
 class ClassName(object):
 
 	# URL patterns
-	URL_SMS_SEND= "http://www.magtifun.ge/scripts/sms_send.php"
-	URL_CHECK	= "http://www.magtifun.ge/scripts/profile_check.php"
-	URL_BASE	= "http://www.magtifun.ge/"
-	URL_QUERY	= "index.php?lang=en&page=%s"
+	URL_SMS_SEND	= "http://www.magtifun.ge/scripts/sms_send.php"
+	URL_CHECK		= "http://www.magtifun.ge/scripts/profile_check.php"
+	URL_BASE		= "http://www.magtifun.ge/"
+	URL_QUERY		= "index.php?lang=en&page=%s"
 
 	# URL params
 	CODE_BALANCE		= 1

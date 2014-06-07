@@ -5,14 +5,20 @@ import json
 
 import magtifun
 
-class MainHandler(webapp2.RequestHandler):
+class SmsHandler(webapp2.RequestHandler):
+
+	sms = None
+
 	def get(self):
-		obj = [14, {'as': [1,54,77]}]
+		self.sms = Magtifun()
+
 		self.response.headers['Content-Type'] = 'application/json'
 		self.response.write(json.dumps(obj))
 
 # let the magic happen
 app = webapp2.WSGIApplication([
-	('/', MainHandler),
-	('/send', MainHandler)
-], debug=True)
+
+	webapp2.Route('/',		handler = 'handlers.SmsHandler:index',	schemes = ['https']),
+	webapp2.Route('/send',	handler = 'handlers.SmsHandler:send',	schemes = ['https'])
+
+], debug = True)
