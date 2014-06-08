@@ -6,6 +6,9 @@ import cookielib
 
 import lxml
 import lxml.html
+import re
+
+from htmlparse import htmldata
 
 ### Magtifun
 
@@ -18,11 +21,11 @@ class Magtifun(object):
 	URL_QUERY		= "index.php?lang=en&page=%s" # force english for parsing
 
 	# URL params
-	CODE_BALANCE		= 1
-	CODE_CONTACTS		= 5
-	CODE_ACCOUNT_INFO	= 7
-	CODE_HISTORY		= 10
-	CODE_LOGIN			= 11
+	CODE_BALANCE	= 1
+	CODE_CONTACTS	= 5
+	CODE_ACCOUNT	= 7
+	CODE_HISTORY	= 10
+	CODE_LOGIN		= 11
 
 	username	= ""
 	password	= ""
@@ -36,7 +39,7 @@ class Magtifun(object):
 	cookieJar	= None
 	opener		= None
 
-	def __init__ (self, username, password):
+	def __init__(self, username, password):
 
 		# cookieJar and opener
 		self.cookieJar = cookielib.CookieJar()
@@ -60,7 +63,6 @@ class Magtifun(object):
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
 
 	def sendRequest(self, code, data = []):
-		
 		req = urllib2.Request(
 			self.getUrl(code, True) if isinstance(code, (int, long)) else code,
 			urllib.urlencode(data))
@@ -94,50 +96,42 @@ class Magtifun(object):
 
 	def getCredits(self):
 		html = lxml.html.fromstring(self.sendRequest(self.CODE_BALANCE))
-		return int(html.cssselect("span.xxlarge")[0].text_content())
+		return int(htmldata(html, "span.xxlarge"))
 
 	def getAccountInfo(self):
 		result = {}
-		html = lxml.html.fromstring(self.sendRequest(self.CODE_ACCOUNT_INFO))
-		result["username"]	= html.cssselect("input#user_name")[0].value
-		result["fullname"]	= html.cssselect("div.tbl_header .center_text")[0].text_content()
-		result["number"]	= html.cssselect("input[disabled]")[0].value
-		result["email"]		= html.cssselect("input#mail")[0].value
-		result["image"]		= html.cssselect("input#user_pic")[0].value
+		html = lxml.html.fromstring(self.sendRequest(self.CODE_ACCOUNT))
+		result["username"]	= htmldata(html, "input#user_name", 0, 'value')
+		result["fullname"]	= htmldata(html, "div.tbl_header .center_text")
+		result["number"]	= htmldata(html, "input[disabled]", 0, 'value')
+		result["email"]		= htmldata(html, "input#mail", 0, 'value')
+		result["image"]		= htmldata(html, "input#user_pic", 0, 'value')
 		#if (!substr_count($result["image"], "://"))
 		#	$result["image"] = "http://magtifun.ge/" . $result["image"];
-		result["credits"]	= int(html.cssselect("span.xxlarge")[0].text_content())
-		result["balance"]	= int(html.cssselect("form .dark")[2].text_content())
+		result["credits"]	= int(htmldata(html, "span.xxlarge"))
+		result["balance"]	= int(htmldata(html, "form .dark", 2))
 		return result
 
-	def test(self):
-		return self.sendRequest(self.CODE_ACCOUNT_INFO)
-		#return lxml.html.fromstring(self.sendRequest(self.CODE_ACCOUNT_INFO))
-
 	def getContacts(self):
-		# html = lxml.html.fromstring(self.sendRequest(self.CODE_CONTACTS))
-		# $html = explode("Generate Contacts Array", $html);
-		# $html = explode("</script>", $html[1]);
-		# $data = explode("Array(", $html[0]);
-		# $json = "[";
-		# $count = count($data);
-		# for ($i = 1; $i < count($data); $i++) {
-		# 	$json .= "[" . strtok($data[$i], ")") . "]";
-		# 	if ($i != $count - 1)
-		# 		$json .= ",\n";
-		# }
-		# $json .= "]";
-		# $contacts = json_decode($json);
-		# $result = array();
-		# foreach ($contacts as $e) {
-		# 	$result[] = array(
-		# 		"name" => $e[1] . (empty($e[2]) ? "" : " " . $e[2]) . " " . $e[3],
-		# 		"number" => $e[4],
-		# 		"gender" => $e[5] ? "male" : "female",
-		# 		);
-		# }
-		#return $result
-		pass
+		html = self.sendRequest(self.CODE_CONTACTS)
+		data = html.split("Generate Contacts Array")[1].split("</script>")[0]
+		contacts = []
+		for match in re.findall('(Array\(")+(.+)+("\);)', data):
+			chunk = match[1].split('","')
+			contacts.append({
+				'id': int(chunk[0]),
+				'names': {
+					'first': chunk[1],
+					'middle': chunk[2],
+					'last': chunk[3]
+				},
+				'fullname':  chunk[1] + (' ' + chunk[2] if chunk[2].__len__() else '') + (' ' + chunk[3] if chunk[3].__len__() else ''),
+				'number': chunk[4], # TODO support multiple numbers
+				'gender': 'male' if chunk[5] == "1" else 'female',
+				'birthday': chunk[7]
+			})
+		return contacts
+		
 
 	def getHistory(sefl, page = 1):
 		# $result = array();

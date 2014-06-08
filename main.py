@@ -20,6 +20,10 @@ class SmsHandler(webapp2.RequestHandler):
 		self.createSmsObject()
 		self.dumpJson(self.sms.getAccountInfo())
 
+	def contacts(self):
+		self.createSmsObject()
+		self.dumpJson(self.sms.getContacts())
+
 	def send(self):
 		self.createSmsObject()
 		self.dumpJson(self.sms.getCredits())
@@ -39,6 +43,7 @@ app = webapp2.WSGIApplication([
 
 	webapp2.Route('/',		handler=SmsHandler, handler_method='index'),#,	schemes=['https']),
 	webapp2.Route('/send',	handler=SmsHandler, handler_method='send'),#,	schemes=['https']),
+	webapp2.Route('/contacts',	handler=SmsHandler, handler_method='contacts'),#,	schemes=['https']),
 	webapp2.Route('/test',	handler=SmsHandler, handler_method='test')#,	schemes=['https'])
 
 ], debug = True)
