@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import json
 
 import urllib
@@ -52,10 +50,6 @@ class Magtifun(object):
 	def getUrl(self, code, full = False):
 		return (self.URL_BASE if full else "") + (self.URL_QUERY %  code)
 
-	def logCookie(self):
-		#echo "\n\n--- Cookie:\n" . file_get_contents($this->cookieFile) . "---\n\n";
-		pass
-
 	def authorize(self):
 		data = dict(
 			act			= 1,
@@ -100,20 +94,20 @@ class Magtifun(object):
 
 	def getCredits(self):
 		html = lxml.html.fromstring(self.sendRequest(self.CODE_BALANCE))
-		html.cssselect("span.xxlarge")[0].text_content()
+		return int(html.cssselect("span.xxlarge")[0].text_content())
 
 	def getAccountInfo(self):
-		result = []
+		result = {}
 		html = lxml.html.fromstring(self.sendRequest(self.CODE_ACCOUNT_INFO))
-		result["username"]	= html.cssselect("input#user_name")[0].value()
+		result["username"]	= html.cssselect("input#user_name")[0].value
 		result["fullname"]	= html.cssselect("div.tbl_header .center_text")[0].text_content()
-		result["number"]	= html.cssselect("input[disabled]")[0].value()
-		result["email"]		= html.cssselect("input#mail")[0].value()
-		result["image"]		= html.cssselect(".fb_img")[0].src()
+		result["number"]	= html.cssselect("input[disabled]")[0].value
+		result["email"]		= html.cssselect("input#mail")[0].value
+		result["image"]		= html.cssselect("input#user_pic")[0].value
 		#if (!substr_count($result["image"], "://"))
 		#	$result["image"] = "http://magtifun.ge/" . $result["image"];
-		result["credits"]	= html.cssselect("span.xxlarge")[0].text_content()
-		result["balance"]	= html.cssselect("form .dark")[0].text_content()
+		result["credits"]	= int(html.cssselect("span.xxlarge")[0].text_content())
+		result["balance"]	= int(html.cssselect("form .dark")[2].text_content())
 		return result
 
 	def test(self):

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import webapp2
 import json
 
@@ -39,8 +37,8 @@ class SmsHandler(webapp2.RequestHandler):
 # let the magic happen
 app = webapp2.WSGIApplication([
 
-	webapp2.Route('/',		handler = SmsHandler, handler_method='index',	schemes = ['https']),
-	webapp2.Route('/send',	handler = SmsHandler, handler_method='send',	schemes = ['https']),
-	webapp2.Route('/test',	handler = SmsHandler, handler_method='test',	schemes = ['https'])
+	webapp2.Route('/',		handler=SmsHandler, handler_method='index'),#,	schemes=['https']),
+	webapp2.Route('/send',	handler=SmsHandler, handler_method='send'),#,	schemes=['https']),
+	webapp2.Route('/test',	handler=SmsHandler, handler_method='test')#,	schemes=['https'])
 
 ], debug = True)
