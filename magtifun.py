@@ -108,8 +108,8 @@ class Magtifun(object):
 		result["image"]		= htmldata(html, "input#user_pic", 0, 'value')
 		#if (!substr_count($result["image"], "://"))
 		#	$result["image"] = "http://magtifun.ge/" . $result["image"];
-		result["credits"]	= int(htmldata(html, "span.xxlarge"))
-		result["balance"]	= int(htmldata(html, "form .dark", 2))
+		result["credits"]	= int(htmldata(html, "span.xxlarge", 0, 'text_content', -1))
+		result["balance"]	= int(htmldata(html, "form .dark", 2, 'text_content', -1))
 		return result
 
 	def getContacts(self):
