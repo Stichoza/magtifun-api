@@ -48,8 +48,18 @@ class SmsHandler(webapp2.RequestHandler):
 			'message': 'action'
 		})
 
+# HTTP Error handler
+def error(request, response, exception):
+	response.headers['Content-Type'] = 'application/json'
+	response.write(json.dumps({
+		'error': 'Unexpected error'
+		}))
+	response.set_status(500)
+		
+
 # let the magic happen
 app = webapp2.WSGIApplication([
 	webapp2.Route('/', handler=SmsHandler, handler_method='index'),
 	webapp2.Route('/<action:\w+>', handler=SmsHandler, handler_method='main')
 ], debug = True)
+app.error_handlers[500] = error
