@@ -31,8 +31,7 @@ class Magtifun(object):
 	password	= ""
 	recipients	= []
 	message		= ""
-	cookieFile	= None
-	loginStatus	= None
+	loginStatus	= False
 	msgStatus	= ""
 	log			= []
 
@@ -50,9 +49,6 @@ class Magtifun(object):
 		self.password = password
 		self.authorize()
 
-	def getUrl(self, code, full = False):
-		return (self.URL_BASE if full else "") + (self.URL_QUERY %  code)
-
 	def authorize(self):
 		data = dict(
 			act			= 1,
@@ -61,6 +57,9 @@ class Magtifun(object):
 		)
 		self.sendRequest(self.CODE_LOGIN, data)
 		self.loginStatus = self.sendRequest(self.URL_CHECK)
+
+	def getUrl(self, code, full = False):
+		return (self.URL_BASE if full else "") + (self.URL_QUERY %  code)
 
 	def sendRequest(self, code, data = []):
 		req = urllib2.Request(
