@@ -14,36 +14,23 @@ class SmsHandler(webapp2.RequestHandler):
 
 	def dumpJson(self, data):
 		self.response.headers['Content-Type'] = 'application/json'
+		data['auth'] = True
 		self.response.write(json.dumps(data))
 
-	def index(self):
+	def main(self, action = None):
 		self.createSmsObject()
-		self.dumpJson(self.sms.getAccountInfo())
-
-	def contacts(self):
-		self.createSmsObject()
-		self.dumpJson(self.sms.getContacts())
-
-	def send(self):
-		self.createSmsObject()
-		self.dumpJson(self.sms.getCredits())
-
-	def test(self):
-		self.createSmsObject()
-		result = dict(
-			username = self.request.get('username'),
-			password = self.request.get('password'),
-			html = self.sms.test()
-		)
-		self.dumpJson(result)
+		response = {
+			'auth': self.sms.isLoggedIn(),
+			'action': action}
+		if self.sms.isLoggedIn():
+			response['data'] = {
+				'account_info': self.sms.getAccountInfo(),
+				'credits': self.sms.getCredits(),
+			}.get(action, 'undefined action')
+		self.dumpJson(response)
 		
 
 # let the magic happen
 app = webapp2.WSGIApplication([
-
-	webapp2.Route('/',		handler=SmsHandler, handler_method='index'),#,	schemes=['https']),
-	webapp2.Route('/send',	handler=SmsHandler, handler_method='send'),#,	schemes=['https']),
-	webapp2.Route('/contacts',	handler=SmsHandler, handler_method='contacts'),#,	schemes=['https']),
-	webapp2.Route('/test',	handler=SmsHandler, handler_method='test')#,	schemes=['https'])
-
+	webapp2.Route('/<action:\w+>', handler=SmsHandler, handler_method='main')
 ], debug = True)
