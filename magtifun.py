@@ -85,8 +85,8 @@ class Magtifun(object):
 
 	def send(self):
 		data = {
-			recipients: ','.join(self.recipients),
-			message_body: self.message
+			'recipients': ','.join(self.recipients),
+			'message_body': self.message
 		}
 		response = self.sendRequest(self.URL_SMS_SEND, data)
 		self.msgStatus = response
